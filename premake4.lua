@@ -24,5 +24,6 @@ libdirs({"/usr/local/lib"})
 files({"src/main.cpp"
        , "src/util.cpp"
        , "src/http_client.cpp"
+       , "src/ssl_socket.cpp"
 })
 
