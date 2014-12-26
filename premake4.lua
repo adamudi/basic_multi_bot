@@ -13,7 +13,7 @@ flags({"Symbols"})
 
 configuration({})
 
-project("bmbottest")
+project("bmbot")
 kind("ConsoleApp")
 language("C++")
 buildoptions({"-std=c++11"})

@@ -32,6 +32,11 @@ class ssl_socket_exception
     std::string msg;
 };
 
+class disconnected_socket_exception : ssl_socket_exception
+{
+    using ssl_socket_exception::ssl_socket_exception;
+};
+
 /**
  * Unified interface for non-blocking read and blocking write, plain
  * and SSL sockets

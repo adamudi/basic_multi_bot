@@ -25,8 +25,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 namespace
 {
-    const ssl_socket_exception NOT_CONNECTED("Socket not connected");
-
     std::string get_ssl_error()
     {
         return std::string(ERR_error_string(0, nullptr));
@@ -146,7 +144,7 @@ ssl_socket& ssl_socket::write(const uint8_t* data, size_t length)
                 break;
               case 0: // The socket has been closed on the other end
                 disconnect();
-                throw ssl_socket_exception("The socket disconnected");
+                throw disconnected_socket_exception("The socket disconnected");
                 break;
               default:
                 current_position += sent;
@@ -162,7 +160,7 @@ ssl_socket& ssl_socket::write(const uint8_t* data, size_t length)
                 {
                   case SSL_ERROR_ZERO_RETURN: // The socket has been closed on the other end
                     disconnect();
-                    throw ssl_socket_exception("The socket disconnected");
+                    throw disconnected_socket_exception("The socket disconnected");
                     break;
                   case SSL_ERROR_WANT_READ:
                   case SSL_ERROR_WANT_WRITE:
