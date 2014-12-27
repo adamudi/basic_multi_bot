@@ -6,6 +6,9 @@
 #include <netdb.h>
 #include <openssl/err.h>
 #include <sys/ioctl.h>
+#include <iostream>
+#include "ssl_socket.h"
+#include "util.h"
 
 namespace
 {
@@ -27,7 +30,7 @@ namespace
         tie(protocol, remaining) = split(url, "://"); // Grab the protocol
         if (remaining.find("/") < remaining.find(":")) // If there is no port
         {
-            port = -1;
+            port = 0;
             tie(host, remaining) = split(remaining, "/");
         } else { // There is a port
             std::string temp_port;
@@ -41,6 +44,11 @@ namespace
         path = "/" + path;
         return std::make_tuple(protocol, host, path, query, port);
     }
+
+    std::string read_full_response(ssl_socket & sock)
+    {
+        return "";
+    }
 }
 
 namespace http_client
@@ -53,12 +61,45 @@ namespace http_client
      */
     std::string get(const std::string & address, u8 retry)
     {
+        return get(address, std::make_tuple("", ""), retry);
+    }
+
+    std::string get(const std::string & address, const std::tuple<std::string, std::string> & auth, u8 retry)
+    {
         std::string protocol;
         std::string host;
         std::string path;
         std::string query;
-        u16 port;
-        tie(protocol, host, path, query, port) = parse_url(address);
+        u16 _port;
+        tie(protocol, host, path, query, _port) = parse_url(address);
+        std::string port = _port == 0 ? protocol : std::to_string(_port);
+
+        ssl_socket sock(host, port);
+        char buffer[1024];
+
+        std::string http_query = "GET / HTTP/1.1\r\n";
+        if (!std::get<0>(auth).empty())
+        {
+            http_query += "Authorization: Basic " + base64encode(std::get<0>(auth) + ":" + std::get<1>(auth)) + "\r\n";
+        }
+        http_query += "User-Agent: curl/7.37.0\r\n" \
+            "Host: " + host + "\r\n\r\n";
+
+        for (u8 i = 0; i < retry; ++i)
+        {
+            try
+            {
+                sock.connect();
+                if (protocol == "https")
+                {
+                    sock.make_secure();
+                }
+                sock.write(http_query);
+                return read_full_response(sock);
+            } catch (const ssl_socket_exception & e) {
+                std::cerr << e.to_string() << '\n';
+            }
+        }
         
         return host;
     }

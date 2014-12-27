@@ -1,0 +1,3 @@
+[submodule "3rdparty/libb64"]
+	path = 3rdparty/libb64
+	url = git://git.code.sf.net/p/libb64/git

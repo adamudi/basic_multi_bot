@@ -3,6 +3,7 @@
 #include <cinttypes>
 #include <tuple>
 #include <string>
+#include <algorithm>
 
 typedef int8_t s8;
 typedef int16_t s16;
@@ -39,3 +40,20 @@ typedef uint_fast64_t fu64;
 #define maxfu64 UINT_FAST64_MAX
 
 std::tuple<std::string, std::string> split(const std::string & haystack, const std::string & needle);
+std::string base64encode(const std::string & decoded);
+std::string base64decode(const std::string & encoded);
+std::string get_env(const std::string & name);
+
+inline std::string & ltrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+    return s;
+}
+
+inline std::string & rtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+    return s;
+}
+
+inline std::string & trim(std::string &s) {
+    return ltrim(rtrim(s));
+}
