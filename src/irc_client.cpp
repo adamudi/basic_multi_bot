@@ -15,3 +15,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
 #include "irc_client.h"
+
+irc_client::irc_client(const std::string & _nickname, const std::string & _host, const std::string & _port):
+    nickname(_nickname),
+    sock(_host, _port)
+{}

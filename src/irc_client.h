@@ -14,3 +14,14 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 #pragma once
+
+#include "reconnecting_ssl_socket.h"
+
+class irc_client
+{
+  public:
+    irc_client(const std::string & _nickname, const std::string & _host, const std::string & _port = "6667");
+  private:
+    reconnecting_ssl_socket sock;
+    std::string nickname;
+};
