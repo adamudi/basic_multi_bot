@@ -13,15 +13,8 @@ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
-#include <iostream>
-#include <memory>
-#include "http_client.h"
-#include "irc_client.h"
 
-int main(int argc, char** argv)
-{
-    // std::cout << http_client::get("http://fizz.buzz/");
-    std::unique_ptr<irc_client> irc(new irc_client("Test_Moboto", "irc.tripadvisor.com", "6667"));
-    irc->connect();
-    return 0;
-}
+#pragma once
+
+#include <string>
+

@@ -82,3 +82,8 @@ void irc_client::send_message(const std::string & room, const std::string & text
         sock.write("PRIVMSG " + room + " :" + current + "\n");
     } while (!remaining.empty());
 }
+
+void irc_client::connect()
+{
+    sock.connect();
+}
