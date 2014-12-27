@@ -7,6 +7,8 @@
 #include <openssl/err.h>
 #include <sys/ioctl.h>
 #include <iostream>
+#include <sstream>
+#include <thread>
 #include "ssl_socket.h"
 #include "util.h"
 
@@ -47,7 +49,21 @@ namespace
 
     std::string read_full_response(ssl_socket & sock)
     {
-        return "";
+        std::stringstream out;
+        char buffer[BUFFERSIZE];
+
+        while (sock.is_connected())
+        {
+            size_t length = sock.read(buffer, BUFFERSIZE);
+            if (length == 0 && sock.is_connected())
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(200));
+            } else {
+                out << std::string(buffer, length);
+            }
+        }
+
+        return out.str();
     }
 }
 
@@ -75,7 +91,6 @@ namespace http_client
         std::string port = _port == 0 ? protocol : std::to_string(_port);
 
         ssl_socket sock(host, port);
-        char buffer[1024];
 
         std::string http_query = "GET / HTTP/1.1\r\n";
         if (!std::get<0>(auth).empty())
