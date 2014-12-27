@@ -67,7 +67,7 @@ void reconnecting_ssl_socket::_reconnect()
     }
 }
 
-reconnecting_ssl_socket& reconnecting_ssl_socket::add_connect_function(std::function<void (reconnecting_ssl_socket &)> & callback)
+reconnecting_ssl_socket& reconnecting_ssl_socket::add_connect_function(std::function<void (reconnecting_ssl_socket &)> callback)
 {
     reconnect_functions.push_back(callback);
     return *this;

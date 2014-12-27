@@ -14,9 +14,71 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+#include <regex>
 #include "irc_client.h"
+#include "util.h"
+
+namespace
+{
+    std::tuple<std::string, std::string, std::vector<std::string> > parse_command(const std::string & inp)
+    {
+        std::string host_header, command;
+        std::string current, remaining;
+        std::vector<std::string> params;
+        std::string final_param;
+        if (inp[0] == ':')
+        {
+            tie(host_header, remaining) = split(inp, " ");
+        } else {
+            remaining = inp;
+        }
+
+        tie(command, remaining) = split(remaining, " ");
+        tie(remaining, final_param) = split(remaining, ":");
+        while (!remaining.empty())
+        {
+            tie(current, remaining) = split(remaining, " ");
+            params.push_back(current);
+        }
+        if (!final_param.empty())
+            params.push_back(final_param);
+        return make_tuple(host_header, command, params);
+    }
+
+    const std::regex username_parser(R"XXX(^:([^!]+)!)XXX", std::regex::icase | std::regex::optimize);
+
+    std::string get_username_from_host_header(const std::string & inp)
+    {
+        std::smatch match;
+        regex_search(inp, match, username_parser);
+        if (match.size() < 1) return "";
+
+        return match[1].str();
+    }
+}
 
 irc_client::irc_client(const std::string & _nickname, const std::string & _host, const std::string & _port):
     nickname(_nickname),
     sock(_host, _port)
-{}
+{
+    sock.add_connect_function([_nickname](reconnecting_ssl_socket & sock){
+            sock.write("NICK :" + _nickname + "\n");
+            sock.write("USER " + _nickname + " 0 0 :" + _nickname + "\n");
+
+            for (const std::string & room : {"#mob", "#mobile", "#rna-dev", "#fancy", "#sitex-dev", "#vr-dev", "#bldev", "#cdsdev", "#tr-dev"})
+            {
+                sock.write("JOIN :" + room + "\n");
+            }
+        });
+}
+
+void irc_client::send_message(const std::string & room, const std::string & text)
+{
+    std::string current;
+    std::string remaining = text;
+    do
+    {
+        tie(current, remaining) = split(remaining, "\n");
+        sock.write("PRIVMSG " + room + " :" + current + "\n");
+    } while (!remaining.empty());
+}

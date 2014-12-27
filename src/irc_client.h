@@ -22,6 +22,8 @@ class irc_client
   public:
     irc_client(const std::string & _nickname, const std::string & _host, const std::string & _port = "6667");
   private:
+    void send_message(const std::string & room, const std::string & text);
+
     reconnecting_ssl_socket sock;
     std::string nickname;
 };

@@ -36,7 +36,7 @@ class reconnecting_ssl_socket
     
     reconnecting_ssl_socket& make_secure();
 
-    reconnecting_ssl_socket& add_connect_function(std::function<void (reconnecting_ssl_socket &)> & callback);
+    reconnecting_ssl_socket& add_connect_function(std::function<void (reconnecting_ssl_socket &)> callback);
 
   private:
     void _reconnect();
