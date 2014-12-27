@@ -116,6 +116,6 @@ namespace http_client
             }
         }
         
-        return host;
+        throw http_client_exception("Failed after " + std::to_string(retry) + " tries");
     }
 }
