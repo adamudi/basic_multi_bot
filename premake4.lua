@@ -22,13 +22,22 @@ files({"3rdparty/libb64/src/cencode.c"
        , "3rdparty/libb64/src/cdecode.c"
 })
 
+project("pugixml")
+kind("StaticLib")
+language("C++")
+includedirs({"3rdparty/pugixml/src"})
+files({"3rdparty/pugixml/src/pugiconfig.hpp"
+       , "3rdparty/pugixml/src/pugixml.cpp"
+       , "3rdparty/pugixml/src/pugixml.hpp"
+})
+
 project("bmbot")
 kind("ConsoleApp")
 language("C++")
 buildoptions({"-std=c++11"})
 linkoptions({"-pthread"})
-links({"ssl", "crypto", "b64"})
-includedirs({"src", "3rdparty/libb64/include"})
+links({"ssl", "crypto", "b64", "pugixml"})
+includedirs({"src", "3rdparty/libb64/include", "3rdparty/pugixml/src", "3rdparty/rapidjson/include"})
 libdirs({"/usr/local/lib"})
 files({"src/main.cpp"
        , "src/util.cpp"

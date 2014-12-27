@@ -1,3 +1,9 @@
 [submodule "3rdparty/libb64"]
 	path = 3rdparty/libb64
 	url = git://git.code.sf.net/p/libb64/git
+[submodule "3rdparty/rapidjson"]
+	path = 3rdparty/rapidjson
+	url = https://github.com/miloyip/rapidjson.git
+[submodule "3rdparty/pugixml"]
+	path = 3rdparty/pugixml
+	url = https://github.com/zeux/pugixml.git
