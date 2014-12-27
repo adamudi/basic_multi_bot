@@ -52,7 +52,7 @@ class ssl_socket
      * @param  _port The port or service name to connect to (ex: "80" or "http")
      */
     ssl_socket(const std::string & _host, const std::string & _port);
-    virtual ~ssl_socket();
+    ~ssl_socket();
     ssl_socket(ssl_socket const&) = delete;
     ssl_socket& operator=(ssl_socket const&) = delete;
 
