@@ -15,6 +15,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 #pragma once
 
+#include <vector>
+#include <functional>
 #include "ssl_socket.h"
 
 class reconnecting_ssl_socket
@@ -34,9 +36,12 @@ class reconnecting_ssl_socket
     
     reconnecting_ssl_socket& make_secure();
 
+    reconnecting_ssl_socket& add_connect_function(std::function<void (reconnecting_ssl_socket &)> & callback);
+
   private:
     void _reconnect();
 
     ssl_socket sock;
     bool reconnect;
+    std::vector<std::function<void (reconnecting_ssl_socket &)> > reconnect_functions;
 };
