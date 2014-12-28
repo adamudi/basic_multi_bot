@@ -32,6 +32,11 @@ files({"3rdparty/pugixml/src/pugiconfig.hpp"
 })
 
 project("bmbot")
+
+configuration({"Debug"})
+defines({"LOG_MASK=\"(~0)\""}) -- Log everything
+configuration({})
+
 kind("ConsoleApp")
 language("C++")
 buildoptions({"-std=c++11"})
