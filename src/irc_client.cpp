@@ -93,7 +93,13 @@ std::vector<message> irc_client::handle_line(const std::string & line)
         {
             address addr = {"irc", sock.get_host(), sender, room};
             message m = {addr, text, false};
-            
+            for (std::unique_ptr<delegate> & d : delegates)
+            {
+                for (const message & new_message : d->accept_message(m, nickname))
+                {
+                    result.push_back(new_message);
+                }
+            }
         }
     }
 
