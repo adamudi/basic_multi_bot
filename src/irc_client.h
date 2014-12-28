@@ -5,6 +5,7 @@
 
 #include "ssl_socket.h"
 #include "connection.h"
+#include "delegate.h"
 #include <string>
 #include <sstream>
 #include <vector>
@@ -16,6 +17,8 @@ class irc_client : public connection
 
     virtual std::vector<std::future<std::vector<message> > > tick();
     virtual void connect();
+
+    virtual connection& add_delegate(std::unique_ptr<delegate> && d);
   private:
     void send_message(const std::string & room, const std::string & text);
 
@@ -25,6 +28,7 @@ class irc_client : public connection
     ssl_socket sock;
     std::string nickname;
     std::vector<std::string> rooms;
+    std::vector<std::unique_ptr<delegate> > delegates;
     std::stringstream stored_buffer;
     char read_buffer[BUFFERSIZE];
     

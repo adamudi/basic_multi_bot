@@ -50,6 +50,7 @@ files({"src/main.cpp"
        , "src/ssl_socket.cpp"
        , "src/irc_client.cpp"
        , "src/connection_manager.cpp"
+       , "src/echo_delegate.cpp"
 })
 
 project("logtest")

@@ -75,13 +75,13 @@ std::vector<message> irc_client::handle_line(const std::string & line)
 
     if (command == "PING")
     {
-        address addr = {sock.get_host(), nickname, ""};
+        address addr = {"irc", sock.get_host(), nickname, ""};
         message m = {addr, "PONG :" + params[0] + "\n", true};
         result.push_back(m);
     } else if (command == "MODE") {
         for (const std::string & room : rooms)
         {
-            address addr = {sock.get_host(), nickname, ""};
+            address addr = {"irc", sock.get_host(), nickname, ""};
             message m = {addr, "JOIN :" + room + "\n", true};
             result.push_back(m);
         }
@@ -91,6 +91,9 @@ std::vector<message> irc_client::handle_line(const std::string & line)
         std::string& text = params[1];
         if (!text.empty())
         {
+            address addr = {"irc", sock.get_host(), sender, room};
+            message m = {addr, text, false};
+            
         }
     }
 
@@ -144,4 +147,10 @@ std::vector<std::string> irc_client::read_lines()
         lines.push_back(line);
     }
     return lines;
+}
+
+connection& irc_client::add_delegate(std::unique_ptr<delegate> && d)
+{
+    delegates.push_back(std::move(d));
+    return *this;
 }
