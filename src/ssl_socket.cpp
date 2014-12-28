@@ -22,6 +22,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <fcntl.h>
 #include <thread>
 #include <openssl/err.h>
+#include "logging.h"
 
 namespace
 {

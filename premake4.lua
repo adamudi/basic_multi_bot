@@ -47,3 +47,12 @@ files({"src/main.cpp"
        , "src/irc_client.cpp"
 })
 
+project("logtest")
+kind("ConsoleApp")
+language("C++")
+buildoptions({"-std=c++11"})
+defines({"LOG_MASK=\"SOCKET|OTHER\""})
+includedirs({"src"})
+files({"src/logging.cpp"
+})
+
