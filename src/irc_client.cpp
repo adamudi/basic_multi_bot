@@ -61,6 +61,10 @@ std::vector<std::future<std::vector<message> > > irc_client::tick()
     {
         result.push_back(std::async(&irc_client::handle_line, this, line));
     }
+    for (std::unique_ptr<delegate> & d : delegates)
+    {
+        result.push_back(std::async(&delegate::tick, d.get()));
+    }
     return result;
 }
 

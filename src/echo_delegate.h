@@ -10,5 +10,7 @@ class echo_delegate : public delegate
 {
   public:
     std::vector<message> accept_message(const message & from, const std::string & current_nick);
+
+    virtual std::vector<message> tick();
   private:
 };

@@ -11,3 +11,10 @@ std::vector<message> echo_delegate::accept_message(const message & from, const s
     result.push_back(out_message);
     return result;
 }
+
+std::vector<message> echo_delegate::tick()
+{
+    std::vector<message> result;
+    
+    return result;
+}

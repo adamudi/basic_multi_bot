@@ -22,8 +22,7 @@ bool connection_manager::tick()
             for (std::future<std::vector<message> > & entry : new_messages)
             {
                 messages_to_process.push_back(std::move(entry));
-            }
-            
+            }            
         }
 
         // WRITE
