@@ -110,6 +110,8 @@ class ssl_socket
      */
     ssl_socket& make_secure();
 
+    const std::string & get_host() const {return host;}
+
   private:
     struct addrinfo* address_info;
     SSL* ssl_handle;

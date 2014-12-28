@@ -46,18 +46,56 @@ namespace
     }
 }
 
-irc_client::irc_client(const std::string & _nickname, const std::string & _host, const std::string & _port):
+irc_client::irc_client(const std::string & _nickname, const std::vector<std::string> & _rooms, const std::string & _host, const std::string & _port):
     nickname(_nickname),
+    rooms(_rooms),
     sock(_host, _port)
 {
 }
 
-void irc_client::tick()
+std::vector<std::future<std::vector<message> > > irc_client::tick()
 {
+    std::vector<std::future<std::vector<message> > > result;
+
     for (const std::string & line : read_lines())
     {
-
+        result.push_back(std::async(&irc_client::handle_line, this, line));
     }
+    return result;
+}
+
+std::vector<message> irc_client::handle_line(const std::string & line)
+{
+    std::vector<message> result;
+
+    std::string host;
+    std::string command;
+    std::vector<std::string> params;
+    tie(host, command, params) = parse_command(line);
+
+    if (command == "PING")
+    {
+        address addr = {sock.get_host(), nickname, ""};
+        message m = {addr, "PONG :" + params[0] + "\n", true};
+        result.push_back(m);
+    } else if (command == "MODE") {
+        for (const std::string & room : rooms)
+        {
+            address addr = {sock.get_host(), nickname, ""};
+            message m = {addr, "JOIN :" + room + "\n", true};
+            result.push_back(m);
+        }
+    } else if (command == "PRIVMSG") {
+        std::string sender = get_username_from_host_header(host);
+        std::string& room = params[0];
+        std::string& text = params[1];
+        if (!text.empty())
+        {
+        }
+    }
+
+
+    return result;
 }
 
 void irc_client::send_message(const std::string & room, const std::string & text)

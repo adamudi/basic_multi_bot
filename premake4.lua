@@ -49,6 +49,7 @@ files({"src/main.cpp"
        , "src/http_client.cpp"
        , "src/ssl_socket.cpp"
        , "src/irc_client.cpp"
+       , "src/connection_manager.cpp"
 })
 
 project("logtest")
