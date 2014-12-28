@@ -12,6 +12,7 @@ class connection
 {
   public:
     virtual std::vector<std::future<std::vector<message> > > tick() = 0;
+    virtual void handle_message(const message & m) = 0;
     virtual void connect() = 0;
 
     virtual connection& add_delegate(std::unique_ptr<delegate> && d) = 0;

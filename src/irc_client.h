@@ -16,6 +16,7 @@ class irc_client : public connection
     irc_client(const std::string & _nickname, const std::vector<std::string> & _rooms, const std::string & _host, const std::string & _port = "6667");
 
     virtual std::vector<std::future<std::vector<message> > > tick();
+    virtual void handle_message(const message & m);
     virtual void connect();
 
     virtual connection& add_delegate(std::unique_ptr<delegate> && d);

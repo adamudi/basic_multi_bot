@@ -15,6 +15,7 @@ bool connection_manager::tick()
     try
     {
         std::vector<std::future<std::vector<message> > > messages_to_process;
+        // READ
         for (std::unique_ptr<connection> & conn : clients)
         {
             std::vector<std::future<std::vector<message> > > new_messages = conn->tick();
@@ -23,6 +24,18 @@ bool connection_manager::tick()
                 messages_to_process.push_back(std::move(entry));
             }
             
+        }
+
+        // WRITE
+        for (std::future<std::vector<message> > & messages_to_send : messages_to_process)
+        {
+            for (const message & m : messages_to_send.get())
+            {
+                for (std::unique_ptr<connection> & conn : clients)
+                {
+                    conn->handle_message(m);
+                }
+            }
         }
     } catch (const ssl_socket_exception & e) {
         std::cerr << e.to_string() << "\n";

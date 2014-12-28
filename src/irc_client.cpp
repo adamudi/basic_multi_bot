@@ -107,6 +107,23 @@ std::vector<message> irc_client::handle_line(const std::string & line)
     return result;
 }
 
+void irc_client::handle_message(const message & m)
+{
+    connect();
+    if (m.addr.protocol != "irc")
+        return;
+
+    if (m.addr.host != sock.get_host())
+        return;
+
+    if (m.raw)
+    {
+        sock.write(m.body);
+    } else {
+        send_message(m.addr.room, m.body);
+    }
+}
+
 void irc_client::send_message(const std::string & room, const std::string & text)
 {
     connect();
