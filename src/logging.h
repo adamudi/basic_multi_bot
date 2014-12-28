@@ -25,6 +25,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define STANDARD MASK_SHIFT(0)
 #define SOCKET MASK_SHIFT(1)
 #define OTHER MASK_SHIFT(2)
+#define IRC MASK_SHIFT(3)
 
 #ifndef LOG_MASK // If LOG_MASK isn't defined, dont log anything but standard
 #define LOG_MASK (STANDARD)

@@ -17,6 +17,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <regex>
 #include "irc_client.h"
 #include "util.h"
+#include "logging.h"
 
 namespace
 {
@@ -61,19 +62,19 @@ irc_client::irc_client(const std::string & _nickname, const std::string & _host,
     nickname(_nickname),
     sock(_host, _port)
 {
-    sock.add_connect_function([_nickname](reconnecting_ssl_socket & sock){
-            sock.write("NICK :" + _nickname + "\n");
-            sock.write("USER " + _nickname + " 0 0 :" + _nickname + "\n");
+}
 
-            for (const std::string & room : {"#mob", "#mobile", "#rna-dev", "#fancy", "#sitex-dev", "#vr-dev", "#bldev", "#cdsdev", "#tr-dev"})
-            {
-                sock.write("JOIN :" + room + "\n");
-            }
-        });
+void irc_client::tick()
+{
+    for (const std::string & line : read_lines())
+    {
+
+    }
 }
 
 void irc_client::send_message(const std::string & room, const std::string & text)
 {
+    connect();
     std::string current;
     std::string remaining = text;
     do
@@ -85,5 +86,36 @@ void irc_client::send_message(const std::string & room, const std::string & text
 
 void irc_client::connect()
 {
+    if (sock.is_connected())
+    {
+        return;
+    }
+
+    log(IRC, "Connecting to IRC");
     sock.connect();
+    sock.write("NICK :" + nickname + "\n");
+    sock.write("USER " + nickname + " 0 0 :" + nickname + "\n");
+    
+    for (const std::string & room : {"#mob", "#mobile", "#rna-dev", "#fancy", "#sitex-dev", "#vr-dev", "#bldev", "#cdsdev", "#tr-dev"})
+    {
+        sock.write("JOIN :" + room + "\n");
+    }
+}
+
+std::vector<std::string> irc_client::read_lines()
+{
+    connect();
+    
+    std::vector<std::string> lines;
+    size_t read_bytes = sock.read(read_buffer, BUFFERSIZE);
+    stored_buffer << std::string(read_buffer, read_bytes);
+
+    std::string buffer = stored_buffer.str();
+    while (buffer.find('\n') != std::string::npos)
+    {
+        std::string line;
+        std::getline(stored_buffer, line);
+        lines.push_back(line);
+    }
+    return lines;
 }
