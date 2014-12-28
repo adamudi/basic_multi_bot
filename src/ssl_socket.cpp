@@ -128,6 +128,7 @@ ssl_socket& ssl_socket::connect()
 
 ssl_socket& ssl_socket::write(const uint8_t* data, size_t length)
 {
+    slog(SOCKET, "SOCK" << connection << "_WRITE " << std::string((char*)data, length));
     for (const uint8_t* current_position = data, * end = data + length; current_position < end; )
     {
         if (!is_secure())
@@ -230,6 +231,7 @@ size_t ssl_socket::read(void* buffer, size_t length)
             return 0;
             break;
           default:
+            slog(SOCKET, "SOCK" << connection << "_READ " << std::string((char*)buffer, read_size));
             return read_size;
             break;
         }
@@ -237,6 +239,7 @@ size_t ssl_socket::read(void* buffer, size_t length)
         ssize_t read_size = SSL_read(ssl_handle, buffer, length);
         if (read_size > 0)
         {
+            slog(SOCKET, "SOCK" << connection << "_READ " << std::string((char*)buffer, read_size));
             return read_size;
         } else {
             switch(SSL_get_error(ssl_handle, read_size))
