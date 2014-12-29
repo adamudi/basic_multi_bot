@@ -13,7 +13,6 @@ int main(int argc, char** argv)
 {
     try {
         connection_manager conn_man;
-        //conn_man.take_connection(std::unique_ptr<irc_client>(new irc_client("Test_Moboto", {"#mob", "#mobile", "#rna-dev", "#fancy", "#sitex-dev", "#vr-dev", "#bldev", "#cdsdev", "#tr-dev"}, "irc.tripadvisor.com", "6667")));
         std::unique_ptr<irc_client> irc(new irc_client("Test_Moboto", {"#mob"}, "irc.tripadvisor.com", "6667"));
         irc->add_delegate(std::unique_ptr<echo_delegate>(new echo_delegate()));
         conn_man.take_connection(std::move(irc));
