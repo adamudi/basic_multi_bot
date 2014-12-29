@@ -3,6 +3,8 @@
  * 
  * Defines the interface for a connection to a service
  */
+#pragma once
+
 #include "message.h"
 #include "delegate.h"
 #include <vector>
