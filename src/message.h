@@ -9,6 +9,6 @@
 struct message
 {
     const address addr;
-    const std::string & body;
+    const std::string body;
     const bool raw; // Write raw body to the socket
 };

@@ -107,7 +107,6 @@ std::vector<message> irc_client::handle_line(const std::string & line)
         }
     }
 
-
     return result;
 }
 
@@ -151,11 +150,6 @@ void irc_client::connect()
     sock.connect();
     sock.write("NICK :" + nickname + "\n");
     sock.write("USER " + nickname + " 0 0 :" + nickname + "\n");
-    
-    for (const std::string & room : {"#mob", "#mobile", "#rna-dev", "#fancy", "#sitex-dev", "#vr-dev", "#bldev", "#cdsdev", "#tr-dev"})
-    {
-        sock.write("JOIN :" + room + "\n");
-    }
 }
 
 std::vector<std::string> irc_client::read_lines()
@@ -164,14 +158,14 @@ std::vector<std::string> irc_client::read_lines()
     
     std::vector<std::string> lines;
     size_t read_bytes = sock.read(read_buffer, BUFFERSIZE);
-    stored_buffer << std::string(read_buffer, read_bytes);
+    stored_buffer += std::string(read_buffer, read_bytes);
 
-    std::string buffer = stored_buffer.str();
-    while (buffer.find('\n') != std::string::npos)
+    for (size_t linebreak = stored_buffer.find('\n');
+         linebreak != std::string::npos;
+         linebreak = stored_buffer.find('\n'))
     {
-        std::string line;
-        std::getline(stored_buffer, line);
-        lines.push_back(line);
+        lines.push_back(stored_buffer.substr(0, linebreak));
+        stored_buffer = stored_buffer.substr(linebreak+1);
     }
     return lines;
 }

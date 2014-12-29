@@ -30,7 +30,7 @@ class irc_client : public connection
     std::string nickname;
     std::vector<std::string> rooms;
     std::vector<std::unique_ptr<delegate> > delegates;
-    std::stringstream stored_buffer;
+    std::string stored_buffer;
     char read_buffer[BUFFERSIZE];
     
 };
