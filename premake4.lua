@@ -52,6 +52,7 @@ files({"src/main.cpp"
        , "src/xmpp_client.cpp"
        , "src/connection_manager.cpp"
        , "src/echo_delegate.cpp"
+       , "src/xml_buffer.cpp"
 })
 
 project("logtest")
