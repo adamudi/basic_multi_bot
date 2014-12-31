@@ -47,10 +47,11 @@ std::vector<std::future<std::vector<message> > > xmpp_client::tick()
         return result;
     }
 
-    // for (const std::string & line : read_lines())
-    // {
-    //     result.push_back(std::async(&xmpp_client::handle_line, this, line));
-    // }
+    std::vector<std::unique_ptr<pugi::xml_document> > lines = stored_buffer.get_lines(sock);
+    for (std::unique_ptr<pugi::xml_document> & current_line : lines)
+    {
+        result.push_back(std::async(&xmpp_client::handle_line, this, std::move(current_line)));
+    }
     for (std::unique_ptr<delegate> & d : delegates)
     {
         result.push_back(std::async(&delegate::tick, d.get()));
@@ -209,7 +210,7 @@ std::vector<message> xmpp_client::continue_connect()
       break;
       case PRESENCE:
       {
-          for (const std::string & room : {"1_bot_testing", "1_mobile_web", "1_api", "1_#trdev"})
+          for (const std::string & room : {"1_bot_testing"/*, "1_mobile_web", "1_api", "1_#trdev"*/})
           {
               message m = {addr, "<presence to='" + room + "@" + muc_host + "/" + nickname + "'><x xmlns='http://jabber.org/protocol/muc'/></presence>", true};
               ret.push_back(m);
@@ -230,4 +231,27 @@ std::string xmpp_client::get_auth_string()
     original[0] = '\0';
     original[username.size()+1] = '\0';
     return base64encode(original);
+}
+
+std::vector<message> xmpp_client::handle_line(const std::unique_ptr<pugi::xml_document> & current_line)
+{
+    std::vector<message> result;
+    pugi::xml_node message = current_line->child("message");
+    if (!message || message.child("delay")) return result;
+    std::string room, sender, ignore;
+    tie(room, ignore, sender) = parse_jid(message.attribute("from").value());
+    std::string text = message.child_value("body");
+    if (!text.empty())
+    {
+        address addr = {"xmpp", sock.get_host(), sender, room};
+        struct message m = {addr, text, false};
+        for (std::unique_ptr<delegate> & d : delegates)
+        {
+            for (const struct message & new_message : d->accept_message(m, nickname))
+            {
+                result.push_back(new_message);
+            }
+        }
+    }
+    return result;
 }

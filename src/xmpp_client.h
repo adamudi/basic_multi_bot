@@ -46,6 +46,7 @@ class xmpp_client : public connection
     void send_message(const std::string & room, const std::string & text);
     std::vector<message> continue_connect();
     std::string get_auth_string();
+    std::vector<message> handle_line(const std::unique_ptr<pugi::xml_document> & current_line);
 
     connected_state state;
     ssl_socket sock;

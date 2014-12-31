@@ -12,8 +12,6 @@ std::vector<std::unique_ptr<pugi::xml_document> > xml_buffer::get_lines(ssl_sock
     size_t read_bytes = sock.read(read_buffer, BUFFERSIZE);
     line_buff += std::string(read_buffer, read_bytes);
     
-    slog(XMPP, "line_buff: " << line_buff);
-    
     if (line_buff.empty())
         return ret;
 
