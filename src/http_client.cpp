@@ -73,7 +73,9 @@ namespace
         size_t content_size = 0;
         size_t expected_content_size = -1;
 
-        while (sock.is_connected())
+        std::chrono::time_point<std::chrono::steady_clock> timeout = std::chrono::steady_clock::now() + std::chrono::seconds(5);
+
+        while (sock.is_connected() && std::chrono::steady_clock::now() < timeout)
         {
             size_t length = sock.read(buffer, BUFFERSIZE);
             if (length == 0 && sock.is_connected())
