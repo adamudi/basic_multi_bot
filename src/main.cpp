@@ -10,6 +10,7 @@
 #include "xmpp_client.h"
 #include "connection_manager.h"
 #include "echo_delegate.h"
+#include "tunnel_delegate.h"
 
 std::map<std::string, std::vector<std::string> > get_protocol_hosts(const std::string & protocol, const std::vector<std::shared_ptr<delegate> > & delegates)
 {
@@ -32,7 +33,10 @@ int main(int argc, char** argv)
     std::cin >> xmpp_pw;
     try {
         connection_manager conn_man;
-        std::vector<std::shared_ptr<delegate> > delegates = {std::shared_ptr<delegate>(new echo_delegate())};
+        std::vector<std::shared_ptr<delegate> > delegates = {
+            // std::shared_ptr<delegate>(new echo_delegate()),
+            std::shared_ptr<delegate>(new tunnel_delegate()),
+        };
         for (auto & irc_host : get_protocol_hosts("irc", delegates))
         {
             std::unique_ptr<irc_client> irc(new irc_client("Test_Moboto", irc_host.second, irc_host.first, "6667"));

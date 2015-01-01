@@ -51,8 +51,9 @@ files({"src/main.cpp"
        , "src/irc_client.cpp"
        , "src/xmpp_client.cpp"
        , "src/connection_manager.cpp"
-       , "src/echo_delegate.cpp"
        , "src/xml_buffer.cpp"
+       , "src/echo_delegate.cpp"
+       , "src/tunnel_delegate.cpp"
 })
 
 project("logtest")
