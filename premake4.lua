@@ -56,13 +56,3 @@ files({"src/main.cpp"
        , "src/echo_delegate.cpp"
        , "src/tunnel_delegate.cpp"
 })
-
-project("logtest")
-kind("ConsoleApp")
-language("C++")
-buildoptions({"-std=c++11"})
-defines({"LOG_MASK=\"SOCKET|OTHER\""})
-includedirs({"src"})
-files({"src/logging.cpp"
-})
-

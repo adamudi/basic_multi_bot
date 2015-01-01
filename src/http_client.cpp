@@ -10,13 +10,15 @@
 #include <openssl/err.h>
 #include <sys/ioctl.h>
 #include <iostream>
-#include <sstream>
 #include <thread>
+#include <regex>
 #include "ssl_socket.h"
 #include "util.h"
 
 namespace
 {
+    const std::regex content_size_matcher(R"XXX(Content-Length: (\d+)\b)XXX", std::regex::icase | std::regex::optimize);
+
     /**
      * Break a URL down into its components
      * 
@@ -25,10 +27,7 @@ namespace
      */
     std::tuple<std::string, std::string, std::string, std::string, u16> parse_url(const std::string & url)
     {
-        std::string protocol;
-        std::string host;
-        std::string path;
-        std::string query;
+        std::string protocol, host, path, query;
         u16 port;
         
         std::string remaining;
@@ -50,10 +49,29 @@ namespace
         return std::make_tuple(protocol, host, path, query, port);
     }
 
-    std::string read_full_response(ssl_socket & sock)
+    std::tuple<std::string, std::string> split_header_and_body(const std::string & result)
     {
-        std::stringstream out;
+        std::string header, body;
+        std::tie(header, body) = split(result, "\r\n\r\n");
+        return make_tuple(header, body);
+    }
+
+    size_t get_expected_content_size(const std::string & http_response)
+    {
+        std::smatch match;
+        regex_search(http_response, match, content_size_matcher);
+        if (match.size() > 1)
+            return std::stoul(match[1].str());
+        
+        return -1;
+    }
+
+    std::tuple<std::string, std::string> read_full_response(ssl_socket & sock)
+    {
+        std::string headers, body;
         char buffer[BUFFERSIZE];
+        size_t content_size = 0;
+        size_t expected_content_size = -1;
 
         while (sock.is_connected())
         {
@@ -62,11 +80,23 @@ namespace
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(200));
             } else {
-                out << std::string(buffer, length);
+                body += std::string(buffer, length);
+                if (expected_content_size == -1)
+                {
+                    expected_content_size = get_expected_content_size(body);
+                }
+                if (headers.empty() && body.find("\r\n\r\n") != std::string::npos)
+                {
+                    std::tie(headers,body) = split_header_and_body(body);
+                }
+                if (body.size() >= expected_content_size)
+                {
+                    break;
+                }
             }
         }
 
-        return out.str();
+        return make_tuple(headers, body);
     }
 }
 
@@ -78,17 +108,14 @@ namespace http_client
      * @param address The URL to request
      * @param retry Number of times to try again on failed attempts
      */
-    std::string get(const std::string & address, u8 retry)
+    std::tuple<std::string, std::string> get(const std::string & address, u8 retry)
     {
         return get(address, std::make_tuple("", ""), retry);
     }
 
-    std::string get(const std::string & address, const std::tuple<std::string, std::string> & auth, u8 retry)
+    std::tuple<std::string, std::string> get(const std::string & address, const std::tuple<std::string, std::string> & auth, u8 retry)
     {
-        std::string protocol;
-        std::string host;
-        std::string path;
-        std::string query;
+        std::string protocol, host, path, query;
         u16 _port;
         tie(protocol, host, path, query, _port) = parse_url(address);
         std::string port = _port == 0 ? protocol : std::to_string(_port);
