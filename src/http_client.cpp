@@ -124,7 +124,7 @@ namespace http_client
 
         ssl_socket sock(host, port);
 
-        std::string http_query = "GET / HTTP/1.1\r\n";
+        std::string http_query = "GET " + path + " HTTP/1.1\r\n";
         if (!std::get<0>(auth).empty())
         {
             http_query += "Authorization: Basic " + base64encode(std::get<0>(auth) + ":" + std::get<1>(auth)) + "\r\n";
