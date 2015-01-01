@@ -3,6 +3,7 @@
  */
 
 #include "tunnel_delegate.h"
+#include <algorithm>
 
 namespace
 {
@@ -50,6 +51,13 @@ namespace
 
         return dests;
     }
+
+    std::string make_irc_username(const std::string & name)
+    {
+        std::string ret(name);
+        ret.erase(std::remove(ret.begin(), ret.end(), ' '), ret.end());
+        return ret + "_mirror";
+    }
 }
 
 std::vector<message> tunnel_delegate::accept_message(const message & from, const std::string & current_nick)
@@ -61,8 +69,18 @@ std::vector<message> tunnel_delegate::accept_message(const message & from, const
     for (const address & addr : get_destinations(from.addr))
     {
         address out_address = {addr.protocol, addr.host, from.addr.username, addr.room};
-        message out_message = {out_address, from.addr.username + ": " + from.body, from.raw};
-        result.push_back(out_message);
+        if (addr.protocol == "irc")
+        {
+            message change_nick = {out_address, "NICK :" + make_irc_username(from.addr.username) + "\n", true};
+            message out_message = {out_address, from.body, from.raw};
+            message change_back = {out_address, "NICK :Test_Moboto\n", true};
+            result.push_back(change_nick);
+            result.push_back(out_message);
+            result.push_back(change_back);
+        } else {
+            message out_message = {out_address, from.addr.username + ": " + from.body, from.raw};
+            result.push_back(out_message);
+        }
     }
     
     return result;
