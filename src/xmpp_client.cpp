@@ -33,6 +33,7 @@ xmpp_client::xmpp_client(const std::string & _username, const std::string & _pas
     sock(_host, _port),
     state(INIT)
 {
+    next_keep_alive = std::chrono::steady_clock::now() + std::chrono::seconds(50);
 }
 
 std::vector<std::future<std::vector<message> > > xmpp_client::tick()
@@ -42,9 +43,20 @@ std::vector<std::future<std::vector<message> > > xmpp_client::tick()
     
     if (state != CONNECTED)
     {
-        slog(XMPP, "continue_connect");
         result.push_back(std::async(&xmpp_client::continue_connect, this));
         return result;
+    }
+
+    std::chrono::time_point<std::chrono::steady_clock> now = std::chrono::steady_clock::now();
+    if (now >= next_keep_alive)
+    {
+        next_keep_alive = now + std::chrono::seconds(50);
+        result.push_back(std::async([&](){
+                    address addr = {"xmpp", sock.get_host(), nickname, ""};
+                    message m = {addr, " ", true};
+                    std::vector<message> ret = {m};
+                    return ret;
+                }));
     }
 
     std::vector<std::unique_ptr<pugi::xml_document> > lines = stored_buffer.get_lines(sock);
@@ -117,18 +129,15 @@ connection& xmpp_client::add_delegate(std::unique_ptr<delegate> && d)
 
 std::vector<message> xmpp_client::continue_connect()
 {
-    slog(XMPP, "state: " << state);
     std::vector<message> ret;
     address addr = {"xmpp", sock.get_host(), nickname, ""};
     switch (state)
     {
       case WAIT_FOR_TAG:
       {
-          slog(XMPP, "Waiting for " << waiting_for_tag);
           std::vector<std::unique_ptr<pugi::xml_document> > lines = stored_buffer.get_lines(sock);
           for (std::unique_ptr<pugi::xml_document> & tag : lines)
           {
-              log(XMPP, "Checking tag");
               if (tag->child(waiting_for_tag.c_str()))
               {
                   state = next_state;
@@ -210,7 +219,7 @@ std::vector<message> xmpp_client::continue_connect()
       break;
       case PRESENCE:
       {
-          for (const std::string & room : {"1_bot_testing"/*, "1_mobile_web", "1_api", "1_#trdev"*/})
+          for (const std::string & room : rooms)
           {
               message m = {addr, "<presence to='" + room + "@" + muc_host + "/" + nickname + "'><x xmlns='http://jabber.org/protocol/muc'/></presence>", true};
               ret.push_back(m);

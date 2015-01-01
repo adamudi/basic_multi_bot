@@ -3,7 +3,6 @@
  */
 
 #include "xml_buffer.h"
-#include "logging.h"
 
 std::vector<std::unique_ptr<pugi::xml_document> > xml_buffer::get_lines(ssl_socket & sock)
 {

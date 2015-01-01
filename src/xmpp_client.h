@@ -58,6 +58,8 @@ class xmpp_client : public connection
     std::vector<std::unique_ptr<delegate> > delegates;
     xml_buffer stored_buffer;
 
+    std::chrono::time_point<std::chrono::steady_clock> next_keep_alive;
+
     // For connection
     std::string waiting_for_tag;
     connected_state next_state;
