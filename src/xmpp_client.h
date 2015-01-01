@@ -40,7 +40,7 @@ class xmpp_client : public connection
     virtual void handle_message(const message & m);
     virtual void connect();
 
-    virtual connection& add_delegate(std::unique_ptr<delegate> && d);
+    virtual connection& add_delegate(std::shared_ptr<delegate> & d);
 
   private:
     void send_message(const std::string & room, const std::string & text);
@@ -55,7 +55,7 @@ class xmpp_client : public connection
     std::string muc_host;
     std::string nickname;
     std::vector<std::string> rooms;
-    std::vector<std::unique_ptr<delegate> > delegates;
+    std::vector<std::shared_ptr<delegate> > delegates;
     xml_buffer stored_buffer;
 
     std::chrono::time_point<std::chrono::steady_clock> next_keep_alive;

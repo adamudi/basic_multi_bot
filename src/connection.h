@@ -17,7 +17,7 @@ class connection
     virtual void handle_message(const message & m) = 0;
     virtual void connect() = 0;
 
-    virtual connection& add_delegate(std::unique_ptr<delegate> && d) = 0;
+    virtual connection& add_delegate(std::shared_ptr<delegate> & d) = 0;
 
   private:
 };

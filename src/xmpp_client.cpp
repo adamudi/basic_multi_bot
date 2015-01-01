@@ -64,7 +64,7 @@ std::vector<std::future<std::vector<message> > > xmpp_client::tick()
     {
         result.push_back(std::async(&xmpp_client::handle_line, this, std::move(current_line)));
     }
-    for (std::unique_ptr<delegate> & d : delegates)
+    for (std::shared_ptr<delegate> & d : delegates)
     {
         result.push_back(std::async(&delegate::tick, d.get()));
     }
@@ -121,9 +121,9 @@ void xmpp_client::connect()
     state = INIT;
 }
 
-connection& xmpp_client::add_delegate(std::unique_ptr<delegate> && d)
+connection& xmpp_client::add_delegate(std::shared_ptr<delegate> & d)
 {
-    delegates.push_back(std::move(d));
+    delegates.push_back(d);
     return *this;
 }
 
@@ -254,7 +254,7 @@ std::vector<message> xmpp_client::handle_line(const std::unique_ptr<pugi::xml_do
     {
         address addr = {"xmpp", sock.get_host(), sender, room};
         struct message m = {addr, text, false};
-        for (std::unique_ptr<delegate> & d : delegates)
+        for (std::shared_ptr<delegate> & d : delegates)
         {
             for (const struct message & new_message : d->accept_message(m, nickname))
             {

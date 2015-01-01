@@ -19,7 +19,7 @@ class irc_client : public connection
     virtual void handle_message(const message & m);
     virtual void connect();
 
-    virtual connection& add_delegate(std::unique_ptr<delegate> && d);
+    virtual connection& add_delegate(std::shared_ptr<delegate> & d);
   private:
     void send_message(const std::string & room, const std::string & text);
 
@@ -29,7 +29,7 @@ class irc_client : public connection
     ssl_socket sock;
     std::string nickname;
     std::vector<std::string> rooms;
-    std::vector<std::unique_ptr<delegate> > delegates;
+    std::vector<std::shared_ptr<delegate> > delegates;
     std::string stored_buffer;
     char read_buffer[BUFFERSIZE];
     

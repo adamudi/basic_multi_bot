@@ -61,7 +61,7 @@ std::vector<std::future<std::vector<message> > > irc_client::tick()
     {
         result.push_back(std::async(&irc_client::handle_line, this, line));
     }
-    for (std::unique_ptr<delegate> & d : delegates)
+    for (std::shared_ptr<delegate> & d : delegates)
     {
         result.push_back(std::async(&delegate::tick, d.get()));
     }
@@ -97,7 +97,7 @@ std::vector<message> irc_client::handle_line(const std::string & line)
         {
             address addr = {"irc", sock.get_host(), sender, room};
             message m = {addr, text, false};
-            for (std::unique_ptr<delegate> & d : delegates)
+            for (std::shared_ptr<delegate> & d : delegates)
             {
                 for (const message & new_message : d->accept_message(m, nickname))
                 {
@@ -170,8 +170,8 @@ std::vector<std::string> irc_client::read_lines()
     return lines;
 }
 
-connection& irc_client::add_delegate(std::unique_ptr<delegate> && d)
+connection& irc_client::add_delegate(std::shared_ptr<delegate> & d)
 {
-    delegates.push_back(std::move(d));
+    delegates.push_back(d);
     return *this;
 }

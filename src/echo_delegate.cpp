@@ -20,3 +20,11 @@ std::vector<message> echo_delegate::tick()
     
     return result;
 }
+
+std::vector<address> echo_delegate::get_rooms()
+{
+    return {
+        {"irc", "irc.tripadvisor.com", "", "#mob"},
+        {"xmpp", "hipchat.tripadvisorhipchat.com", "", "1_bot_testing"}            
+    };
+}
