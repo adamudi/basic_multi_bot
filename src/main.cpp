@@ -39,7 +39,7 @@ int main(int argc, char** argv)
         };
         for (auto & irc_host : get_protocol_hosts("irc", delegates))
         {
-            std::unique_ptr<irc_client> irc(new irc_client("Test_Moboto", irc_host.second, irc_host.first, "6667"));
+            std::unique_ptr<irc_client> irc(new irc_client(IRC_NAME, irc_host.second, irc_host.first, "6667"));
             for (auto d : delegates)
             {
                 irc->add_delegate(d);

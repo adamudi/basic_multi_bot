@@ -73,7 +73,7 @@ std::vector<message> tunnel_delegate::accept_message(const message & from, const
         {
             message change_nick = {out_address, "NICK :" + make_irc_username(from.addr.username) + "\n", true};
             message out_message = {out_address, from.body, from.raw};
-            message change_back = {out_address, "NICK :Test_Moboto\n", true};
+            message change_back = {out_address, "NICK :" IRC_NAME "\n", true};
             result.push_back(change_nick);
             result.push_back(out_message);
             result.push_back(change_back);

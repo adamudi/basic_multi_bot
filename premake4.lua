@@ -44,6 +44,7 @@ linkoptions({"-pthread"})
 links({"ssl", "crypto", "b64", "pugixml"})
 includedirs({"src", "3rdparty/libb64/include", "3rdparty/pugixml/src", "3rdparty/rapidjson/include"})
 libdirs({"/usr/local/lib"})
+defines({"IRC_NAME=\"\\\"Test_Moboto\\\"\""})
 files({"src/main.cpp"
        , "src/util.cpp"
        , "src/http_client.cpp"
