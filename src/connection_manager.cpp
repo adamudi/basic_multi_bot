@@ -39,8 +39,6 @@ bool connection_manager::tick()
     } catch (const ssl_socket_exception & e) {
         std::cerr << e.to_string() << "\n";
         return false;
-    } catch (...) {
-        return false;
     }
 
     return true;
