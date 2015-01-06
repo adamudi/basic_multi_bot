@@ -34,12 +34,12 @@ int main(int argc, char** argv)
     try {
         connection_manager conn_man;
         std::vector<std::shared_ptr<delegate> > delegates = {
-            // std::shared_ptr<delegate>(new echo_delegate()),
-            std::shared_ptr<delegate>(new tunnel_delegate()),
+            std::make_shared<echo_delegate>(),
+            std::make_shared<tunnel_delegate>(),
         };
         for (auto & irc_host : get_protocol_hosts("irc", delegates))
         {
-            std::unique_ptr<irc_client> irc(new irc_client(IRC_NAME, irc_host.second, irc_host.first, "6667"));
+            std::unique_ptr<irc_client> irc = std::make_unique<irc_client>(IRC_NAME, irc_host.second, irc_host.first, "6667");
             for (auto d : delegates)
             {
                 irc->add_delegate(d);
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
         }
         for (auto & xmpp_host : get_protocol_hosts("xmpp", delegates))
         {
-            std::unique_ptr<xmpp_client> xmpp(new xmpp_client("1_13", xmpp_pw, xmpp_host.second, xmpp_host.first, "conf.btf.hipchat.com", "Mr Moboto", "5222"));
+            std::unique_ptr<xmpp_client> xmpp = std::make_unique<xmpp_client>("1_13", xmpp_pw, xmpp_host.second, xmpp_host.first, "conf.btf.hipchat.com", "Mr Moboto", "5222");
             for (auto d : delegates)
             {
                 xmpp->add_delegate(d);

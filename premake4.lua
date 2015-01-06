@@ -39,7 +39,7 @@ configuration({})
 
 kind("ConsoleApp")
 language("C++")
-buildoptions({"-std=c++11"})
+buildoptions({"-std=c++14"})
 linkoptions({"-pthread"})
 links({"ssl", "crypto", "b64", "pugixml"})
 includedirs({"src", "3rdparty/libb64/include", "3rdparty/pugixml/src", "3rdparty/rapidjson/include"})

@@ -14,7 +14,7 @@ std::vector<std::unique_ptr<pugi::xml_document> > xml_buffer::get_lines(ssl_sock
     if (line_buff.empty())
         return ret;
 
-    std::unique_ptr<pugi::xml_document> doc(new pugi::xml_document());
+    std::unique_ptr<pugi::xml_document> doc = std::make_unique<pugi::xml_document>();
 
     pugi::xml_parse_result result = doc->load_buffer(line_buff.data(), line_buff.size());
 
@@ -24,7 +24,7 @@ std::vector<std::unique_ptr<pugi::xml_document> > xml_buffer::get_lines(ssl_sock
         if (stream_location != std::string::npos)
         {
             // Create a fake stream tag
-            std::unique_ptr<pugi::xml_document> fake_doc(new pugi::xml_document());
+            std::unique_ptr<pugi::xml_document> fake_doc = std::make_unique<pugi::xml_document>();
             pugi::xml_node node = fake_doc->append_child();
             node.set_name("stream");
             ret.push_back(move(fake_doc));

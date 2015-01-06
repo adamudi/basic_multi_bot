@@ -91,7 +91,7 @@ void xmpp_client::handle_message(const message & m)
 void xmpp_client::send_message(const std::string & room, const std::string & text)
 {
     connect();
-    std::unique_ptr<pugi::xml_document> fake_doc(new pugi::xml_document());
+    std::unique_ptr<pugi::xml_document> fake_doc = std::make_unique<pugi::xml_document>();
     pugi::xml_node message = fake_doc->append_child();
     message.set_name("message");
     std::string full_room = room + "@" + muc_host;
