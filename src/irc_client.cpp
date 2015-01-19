@@ -59,11 +59,11 @@ std::vector<std::future<std::vector<message> > > irc_client::tick()
 
     for (const std::string & line : read_lines())
     {
-        result.push_back(std::async(&irc_client::handle_line, this, line));
+        result.push_back(std::async(std::launch::async, &irc_client::handle_line, this, line));
     }
     for (std::shared_ptr<delegate> & d : delegates)
     {
-        result.push_back(std::async(&delegate::tick, d.get()));
+        result.push_back(std::async(std::launch::async, &delegate::tick, d.get()));
     }
     return result;
 }

@@ -43,7 +43,7 @@ std::vector<std::future<std::vector<message> > > xmpp_client::tick()
     
     if (state != CONNECTED)
     {
-        result.push_back(std::async(&xmpp_client::continue_connect, this));
+        result.push_back(std::async(std::launch::async, &xmpp_client::continue_connect, this));
         return result;
     }
 
@@ -51,7 +51,7 @@ std::vector<std::future<std::vector<message> > > xmpp_client::tick()
     if (now >= next_keep_alive)
     {
         next_keep_alive = now + std::chrono::seconds(50);
-        result.push_back(std::async([&](){
+        result.push_back(std::async(std::launch::async, [&](){
                     address addr = {"xmpp", sock.get_host(), nickname, ""};
                     message m = {addr, " ", true};
                     std::vector<message> ret = {m};
@@ -62,11 +62,11 @@ std::vector<std::future<std::vector<message> > > xmpp_client::tick()
     std::vector<std::unique_ptr<pugi::xml_document> > lines = stored_buffer.get_lines(sock);
     for (std::unique_ptr<pugi::xml_document> & current_line : lines)
     {
-        result.push_back(std::async(&xmpp_client::handle_line, this, std::move(current_line)));
+        result.push_back(std::async(std::launch::async, &xmpp_client::handle_line, this, std::move(current_line)));
     }
     for (std::shared_ptr<delegate> & d : delegates)
     {
-        result.push_back(std::async(&delegate::tick, d.get()));
+        result.push_back(std::async(std::launch::async, &delegate::tick, d.get()));
     }
     return result;
 }
