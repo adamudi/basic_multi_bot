@@ -7,6 +7,7 @@
 #include <tuple>
 #include <string>
 #include <algorithm>
+#include <sstream>
 
 typedef int8_t s8;
 typedef int16_t s16;
@@ -59,4 +60,23 @@ inline std::string & rtrim(std::string &s) {
 
 inline std::string & trim(std::string &s) {
     return ltrim(rtrim(s));
+}
+
+inline std::string replace_all(const std::string & haystack, const std::string & needle, const std::string & replacement = "")
+{
+    std::stringstream out;
+    size_t offset = 0;
+    while (true)
+    {
+        size_t needle_pos = haystack.find(needle, offset);
+        if (needle_pos == std::string::npos)
+        {
+            out << haystack.substr(offset);
+            break;
+        }
+        
+        out << haystack.substr(offset, needle_pos - offset) << replacement;
+        offset = needle_pos + needle.size();
+    }
+    return out.str();
 }

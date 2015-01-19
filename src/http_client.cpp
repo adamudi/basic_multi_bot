@@ -112,10 +112,10 @@ namespace http_client
      */
     std::tuple<std::string, std::string> get(const std::string & address, u8 retry)
     {
-        return get(address, std::make_tuple("", ""), retry);
+        return get(address, {}, retry);
     }
 
-    std::tuple<std::string, std::string> get(const std::string & address, const std::tuple<std::string, std::string> & auth, u8 retry)
+    std::tuple<std::string, std::string> get(const std::string & address, const std::vector<std::tuple<std::string, std::string> > & headers, u8 retry)
     {
         std::string protocol, host, path, query;
         u16 _port;
@@ -125,9 +125,9 @@ namespace http_client
         ssl_socket sock(host, port);
 
         std::string http_query = "GET " + path + " HTTP/1.1\r\n";
-        if (!std::get<0>(auth).empty())
+        for (const std::tuple<std::string, std::string> & header : headers)
         {
-            http_query += "Authorization: Basic " + base64encode(std::get<0>(auth) + ":" + std::get<1>(auth)) + "\r\n";
+            http_query += std::get<0>(header) + ": " + std::get<1>(header) + "\r\n";
         }
         http_query += "User-Agent: curl/7.37.0\r\n" \
             "Host: " + host + "\r\n\r\n";
@@ -149,5 +149,10 @@ namespace http_client
         }
         
         throw http_client_exception("Failed after " + std::to_string(retry) + " tries");
+    }
+
+    std::tuple<std::string, std::string> auth(const std::string username, const std::string password)
+    {
+        return make_tuple("Authorization", "Basic " + base64encode(username + ":" + password));
     }
 }
