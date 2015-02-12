@@ -124,7 +124,12 @@ namespace http_client
 
         ssl_socket sock(host, port);
 
-        std::string http_query = "GET " + path + " HTTP/1.1\r\n";
+        std::string http_query = "GET " + path;
+        if (!query.empty())
+        {
+            http_query += "?" + query;
+        }
+        http_query += " HTTP/1.1\r\n";
         for (const std::tuple<std::string, std::string> & header : headers)
         {
             http_query += std::get<0>(header) + ": " + std::get<1>(header) + "\r\n";
