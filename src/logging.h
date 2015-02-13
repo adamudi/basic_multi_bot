@@ -27,7 +27,7 @@
  * 
  * log(OTHER | SOCKET, "log if either OTHER or SOCKET is true");
  */
-#define log(filter, cformat, ...) if (((filter) & (LOG_MASK)) != 0) printf("LOG %s:%u: " cformat "\n", __FILE__, __LINE__, ##__VA_ARGS__)
+#define lg(filter, cformat, ...) if (((filter) & (LOG_MASK)) != 0) printf("LOG " #filter "  %s:%u: " cformat "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 
 /**
  * Print a log message prefixed with "LOG <file>:<lineno>: " to
@@ -36,7 +36,7 @@
  * 
  * log_all(OTHER | SOCKET, "log if both OTHER or SOCKET are true");
  */
-#define log_all(filter, cformat, ...) if (((filter) & (LOG_MASK)) == (filter)) printf("LOG %s:%u: " cformat "\n", __FILE__, __LINE__, ##__VA_ARGS__)
+#define log_all(filter, cformat, ...) if (((filter) & (LOG_MASK)) == (filter)) printf("LOG " #filter "  %s:%u: " cformat "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 
 /**
  * Print a log message prefixed with "LOG <file>:<lineno>: " to
@@ -45,7 +45,7 @@
  * 
  * log(OTHER | SOCKET, "log if either OTHER or SOCKET is true");
  */
-#define elog(filter, cformat, ...) if (((filter) & (LOG_MASK)) != 0) fprintf(stderr, "LOG %s:%u: " cformat "\n", __FILE__, __LINE__, ##__VA_ARGS__)
+#define elog(filter, cformat, ...) if (((filter) & (LOG_MASK)) != 0) fprintf(stderr, "LOG " #filter " %s:%u: " cformat "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 
 /**
  * Print a log message prefixed with "LOG <file>:<lineno>: " to
@@ -61,26 +61,25 @@
  * stdout. It will only print if any of the log types defined by the
  * first parameter are set to true in LOG_MASK. Example usage:
  */
-#define slog(filter, ...) if (((filter) & (LOG_MASK)) != 0) std::cout << "LOG " << __FILE__ << ":" << __LINE__ << ": " << __VA_ARGS__ << "\n"
+#define slog(filter, ...) if (((filter) & (LOG_MASK)) != 0) std::cout << "LOG " #filter " " << __FILE__ << ":" << __LINE__ << ": " << __VA_ARGS__ << "\n"
 
 /**
  * Print a log message prefixed with "LOG <file>:<lineno>: " to
  * stdout. It will only print if all of the log types defined by the
  * first parameter are set to true in LOG_MASK. Example usage:
  */
-#define slog_all(filter, ...) if (((filter) & (LOG_MASK)) == (filter)) std::cout << "LOG " << __FILE__ << ":" << __LINE__ << ": " << __VA_ARGS__ << "\n"
+#define slog_all(filter, ...) if (((filter) & (LOG_MASK)) == (filter)) std::cout << "LOG " #filter " " << __FILE__ << ":" << __LINE__ << ": " << __VA_ARGS__ << "\n"
 
 /**
  * Print a log message prefixed with "LOG <file>:<lineno>: " to
  * stderr. It will only print if any of the log types defined by the
  * first parameter are set to true in LOG_MASK. Example usage:
  */
-#define selog(filter, ...) if (((filter) & (LOG_MASK)) != 0) std::cerr << "LOG " << __FILE__ << ":" << __LINE__ << ": " << __VA_ARGS__ << "\n"
+#define selog(filter, ...) if (((filter) & (LOG_MASK)) != 0) std::cerr << "LOG " #filter " " << __FILE__ << ":" << __LINE__ << ": " << __VA_ARGS__ << "\n"
 
 /**
  * Print a log message prefixed with "LOG <file>:<lineno>: " to
  * stderr. It will only print if all of the log types defined by the
  * first parameter are set to true in LOG_MASK. Example usage:
  */
-#define selog_all(filter, ...) if (((filter) & (LOG_MASK)) == (filter)) std::cerr << "LOG " << __FILE__ << ":" << __LINE__ << ": " << __VA_ARGS__ << "\n"
-
+#define selog_all(filter, ...) if (((filter) & (LOG_MASK)) == (filter)) std::cerr << "LOG " #filter " " << __FILE__ << ":" << __LINE__ << ": " << __VA_ARGS__ << "\n"

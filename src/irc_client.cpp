@@ -146,7 +146,7 @@ void irc_client::connect()
         return;
     }
 
-    log(IRC, "Connecting to IRC");
+    lg(IRC, "Connecting to IRC");
     sock.connect();
     sock.write("NICK :" + nickname + "\n");
     sock.write("USER " + nickname + " 0 0 :" + nickname + "\n");

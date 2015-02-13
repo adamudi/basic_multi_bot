@@ -116,7 +116,7 @@ void xmpp_client::connect()
         return;
     }
 
-    log(XMPP, "Connecting to XMPP");
+    lg(XMPP, "Connecting to XMPP");
     sock.connect();
     state = INIT;
 }
