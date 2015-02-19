@@ -199,7 +199,7 @@ std::vector<message> xmpp_client::continue_connect()
       break;
       case SET_RESOURCE:
       {
-          message m = {addr, "<iq type='set' id='H_0'><bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'><resource>" + nickname + "</resource></bind></iq>", true};
+          message m = {addr, "<iq type='set' id='H_0'><bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'><resource>bot</resource></bind></iq>", true};
           ret.push_back(m);
           
           waiting_for_tag = "iq";
