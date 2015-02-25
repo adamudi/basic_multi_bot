@@ -150,6 +150,7 @@ namespace http_client
                 return read_full_response(sock);
             } catch (const ssl_socket_exception & e) {
                 std::cerr << e.to_string() << '\n';
+                sock.disconnect();
             }
         }
         
