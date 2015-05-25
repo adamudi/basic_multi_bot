@@ -1,17 +1,51 @@
 use std::net::TcpStream;
-use std::io::Write;
-use std::io::Read;
+use std::io::{Write, Read};
+use std::io;
+use std::str;
 
+enum ConnectedState {
+    handshake
+}
 
-pub struct IrcClient {
-    pub host: &'static str,
-    pub port: &'static str,
-    pub nickname: &'static str,
+pub struct DisconnectedIrcClient<'a> {
+    pub host: &'a str,
+    pub port: &'a str,
+    pub nickname: &'a str,
     pub rooms: Vec<String>,
 }
 
-impl IrcClient {
-    pub fn connect(&self) {
-        
+pub struct ConnectedIrcClient<'a> {
+    pub disconnected: &'a DisconnectedIrcClient<'a>,
+    pub connection: TcpStream,
+    state: ConnectedState,
+    pub buffer: [u8; 500],
+}
+
+impl<'a> DisconnectedIrcClient<'a> {
+    pub fn new(host: &'a str, port: &'a str, nickname: &'a str, rooms: Vec<String>) -> DisconnectedIrcClient<'a> {
+        DisconnectedIrcClient{host: host, port: port, nickname: nickname, rooms: rooms}
     }
 }
+
+impl<'a> ConnectedIrcClient<'a> {
+    pub fn new(client: &'a DisconnectedIrcClient<'a>) -> Result<ConnectedIrcClient<'a>, io::Error> {
+        let combined_address = format!("{}:{}", client.host, client.port);
+        TcpStream::connect(&*combined_address).map(|x| ConnectedIrcClient{disconnected: &client, connection: x, state: ConnectedState::handshake, buffer: [0; 500]})
+    }
+
+    pub fn tick(&mut self) {
+        match &self.state {
+            handshake => {
+                write!(self.connection, "USER {} 0 0 :{}\n", self.disconnected.nickname, self.disconnected.nickname);
+                write!(self.connection, "NICK :{}\n", self.disconnected.nickname);
+            }
+        }
+        loop {
+            let response = self.connection.read(&mut self.buffer).map(|bytes_read| str::from_utf8(&self.buffer[0..bytes_read]).unwrap_or("Invalid UTF-8 sequence")).unwrap_or("Empty Response");
+            println!("{}", response);
+        }
+        ()
+    }
+}
+// sock.write("NICK :" + nickname + "\n");
+// sock.write("USER " + nickname + " 0 0 :" + nickname + "\n");
