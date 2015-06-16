@@ -14,9 +14,9 @@ namespace
     };
 
     tunnel_pair tunnel_pairs[] = {
-        {{"irc", "irc.tripadvisor.com", "", "#mob"}, {"xmpp", "hipchat.tripadvisorhipchat.com", "", "1_bot_testing"}},
-        {{"irc", "irc.tripadvisor.com", "", "#tr-dev"}, {"xmpp", "hipchat.tripadvisorhipchat.com", "", "1_#trdev"}},
-        {{"irc", "irc.tripadvisor.com", "", "#mobile"}, {"xmpp", "hipchat.tripadvisorhipchat.com", "", "1_mobile_web"}},
+        {{"irc", "irc.dev.tripadvisor.com", "", "#mob"}, {"xmpp", "hipchat.tripadvisorhipchat.com", "", "1_bot_testing"}},
+        {{"irc", "irc.dev.tripadvisor.com", "", "#tr-dev"}, {"xmpp", "hipchat.tripadvisorhipchat.com", "", "1_#trdev"}},
+        {{"irc", "irc.dev.tripadvisor.com", "", "#mobile"}, {"xmpp", "hipchat.tripadvisorhipchat.com", "", "1_mobile_web"}},
     };
 
     bool match_protocol_and_room(const address & needle, const std::vector<address> & haystack)

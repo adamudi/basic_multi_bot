@@ -41,7 +41,7 @@ std::vector<message> echo_delegate::tick()
 std::vector<address> echo_delegate::get_rooms()
 {
     return {
-        {"irc", "irc.tripadvisor.com", "", "#mob"},
+        {"irc", "irc.dev.tripadvisor.com", "", "#mob"},
         {"xmpp", "hipchat.tripadvisorhipchat.com", "", "1_bot_testing"}            
     };
 }
