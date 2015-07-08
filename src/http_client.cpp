@@ -129,7 +129,7 @@ namespace http_client
         {
             http_query += "?" + query;
         }
-        http_query += " HTTP/1.1\r\n";
+        http_query += " HTTP/1.0\r\n";
         for (const std::tuple<std::string, std::string> & header : headers)
         {
             http_query += std::get<0>(header) + ": " + std::get<1>(header) + "\r\n";
