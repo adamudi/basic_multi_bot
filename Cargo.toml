@@ -4,3 +4,7 @@ name = "basic_multi_bot"
 version = "0.0.1"
 authors = ["Tom Alexander <tom@fizz.buzz>"]
 
+[dependencies]
+mio = "*"
+bytes = "*"
+env_logger = "*"
