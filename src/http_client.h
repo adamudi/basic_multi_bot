@@ -5,6 +5,7 @@
 
 #include <string>
 #include "util.h"
+#include <vector>
 
 namespace http_client
 {

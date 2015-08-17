@@ -8,6 +8,7 @@
 #include <string>
 #include <algorithm>
 #include <sstream>
+#include <vector>
 
 typedef int8_t s8;
 typedef int16_t s16;
